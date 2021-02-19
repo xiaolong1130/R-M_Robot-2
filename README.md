@@ -263,7 +263,7 @@ armor_detector.getAngle(angle_x, angle_y);
 #define BUFF_VIDEO_PATH "../Videos/test.avi"
 ```
 同时需要将下方结构体中`mode`改成对模式
-
+ 
 ``` 
 struct OtherParam
 {
