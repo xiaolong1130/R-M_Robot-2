@@ -5,7 +5,7 @@
 #define CANCLE_GALAXY   // 取消工业相机宏定义
 
 // 资源岛测试快速宏定义-<<<----------------
-#define CAMERA1_FILEPATH "../rm-vision/camera/camera_param/\
+#define CAMERA1_FILEPATH "../rm_vision/camera/camera_param/\
 galaxy_0.xml"
 //#define SAVE_VIDEO_THREAD
 #define WAITKEY 1
@@ -60,9 +60,9 @@ galaxy_0.xml"
 #define SERIAL_BAUD B115200     // B115200 B921600
 #define GIMBAL_PATH "/dev/ttyUSB0"
 #define GIMBAL_BAUD B921600
-#define CAMERA0_PATH "/dev/camera"
+#define CAMERA0_PATH "/dev/video0"
 #define CAMERA1_PATH "/dev/video1"
-#define CAMERA0_FILEPATH "../rm-vision/camera/camera_param/\
+#define CAMERA0_FILEPATH "../rm_vision/camera/camera_param/\
 camera4mm_5.xml"
 
 
