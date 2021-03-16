@@ -5,7 +5,7 @@
 #define CANCLE_GALAXY   // 取消工业相机宏定义
 
 // 资源岛测试快速宏定义-<<<----------------
-#define CAMERA1_FILEPATH "../rm_vision/camera/camera_param/\
+#define CAMERA1_FILEPATH "../rm-vision/camera/camera_param/\
 galaxy_0.xml"
 //#define SAVE_VIDEO_THREAD
 #define WAITKEY 1
@@ -37,7 +37,7 @@ galaxy_0.xml"
 //#define GALAXY
 //#define DEBUG_PLOT
 //****** 线程使能 *****
-#define SHORT_CAMERA_ENABLE 0
+#define SHORT_CAMERA_ENABLE 1
 #define LONG_CAMERA_ENABLE  0
 //#define GET_STM32_THREAD
 //****** 装甲板识别配置 *****
@@ -60,10 +60,9 @@ galaxy_0.xml"
 #define SERIAL_BAUD B115200     // B115200 B921600
 #define GIMBAL_PATH "/dev/ttyUSB0"
 #define GIMBAL_BAUD B921600
-#define CAMERA0_PATH "/dev/video0"
+#define CAMERA0_PATH "/dev/video1"
 #define CAMERA1_PATH "/dev/video1"
-#define CAMERA0_FILEPATH "../rm_vision/camera/camera_param/\
-camera4mm_5.xml"
+#define CAMERA0_FILEPATH "../rm-vision/camera/camera_param/camera4mm_5.xml"
 
 
 //****** 角度解算配置 *****
@@ -79,7 +78,7 @@ camera4mm_5.xml"
 #define PTZ_TO_BARREL 0.0f   // 补兵激光在２３ｍｍ下方
 
 //****** 笔记本调试相关参数 *****
-#define DEBUG_VIDEO 1
+#define DEBUG_VIDEO 0
 //#define FORCE_CHANGE_CAMERA
 #define ARMOR_VIDEO_PATH "../Videos/test.avi"
 #define BUFF_VIDEO_PATH "../Videos/test.avi"
@@ -87,7 +86,7 @@ struct OtherParam
 {
     int color = 1;       // 我方车辆颜色，0是蓝色，1是红色。用于图像预处理
     int mode = 0;        // 视觉模式，0是自瞄模式，1是能量机关模式
-    int cap_mode = 1;    // 摄像头类型，0是短焦摄像头，1是长焦摄像头
+    int cap_mode = 0;    // 摄像头类型，0是短焦摄像头，1是长焦摄像头
     float gimbal_data;
     float buff_offset_x;
     float buff_offset_y;

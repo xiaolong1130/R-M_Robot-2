@@ -42,10 +42,14 @@ void ThreadControl::ImageProduce()
 
 #if(SHORT_CAMERA_ENABLE)
     CaptureVideo short_camera(CAMERA0_PATH, 3);                // 选择相机驱动文件，可在终端下输入"ls /dev" 查看. 4帧缓存
+    cout << "  short_camera " << endl;
     short_camera.setVideoFormat(VIDEO_WIDTH, VIDEO_HEIGHT, 1);   // 设置长宽格式及使用mjpg编码格式
-    short_camera.setExposureTime(0, 100);                         // 手动曝光，设置曝光时间。
+    cout << "  setVideoFormat " << endl;
+    //short_camera.setExposureTime(0, 100);                         // 手动曝光，设置曝光时间。
+
     short_camera.startStream();                                  // 打开视频流
-    //        short_camera.info();                                         // 输出摄像头信息
+     cout << " 不讲伍德 " << endl;
+    //short_camera.info();                                         // 输出摄像头信息
 #endif
 #if(LONG_CAMERA_ENABLE)
 #ifdef GALAXY
