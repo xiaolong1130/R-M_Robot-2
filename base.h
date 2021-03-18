@@ -37,7 +37,7 @@ galaxy_0.xml"
 //#define GALAXY
 //#define DEBUG_PLOT
 //****** 线程使能 *****
-#define SHORT_CAMERA_ENABLE 1
+#define SHORT_CAMERA_ENABLE 0
 #define LONG_CAMERA_ENABLE  0
 //#define GET_STM32_THREAD
 //****** 装甲板识别配置 *****
@@ -51,9 +51,9 @@ galaxy_0.xml"
 
 
 //****** 摄像头信息 *****
-#define VIDEO_WIDTH 640
-#define VIDEO_HEIGHT 360
-#define BUFFER_SIZE 1
+#define VIDEO_WIDTH 1300
+#define VIDEO_HEIGHT 800
+#define BUFFER_SIZE 5
 
 //****** 外部驱动配置 *****
 #define SERIAL_PATH "/dev/stm32"
@@ -78,14 +78,14 @@ galaxy_0.xml"
 #define PTZ_TO_BARREL 0.0f   // 补兵激光在２３ｍｍ下方
 
 //****** 笔记本调试相关参数 *****
-#define DEBUG_VIDEO 0
+#define DEBUG_VIDEO 1
 //#define FORCE_CHANGE_CAMERA
-#define ARMOR_VIDEO_PATH "../Videos/test.avi"
-#define BUFF_VIDEO_PATH "../Videos/test.avi"
+#define ARMOR_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
+#define BUFF_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
 struct OtherParam
 {
-    int color = 1;       // 我方车辆颜色，0是蓝色，1是红色。用于图像预处理
-    int mode = 0;        // 视觉模式，0是自瞄模式，1是能量机关模式
+    int color = 0;       // 我方车辆颜色，0是蓝色，1是红色。用于图像预处理
+    int mode = 1;        // 视觉模式，0是自瞄模式，1是能量机关模式
     int cap_mode = 0;    // 摄像头类型，0是短焦摄像头，1是长焦摄像头
     float gimbal_data;
     float buff_offset_x;

@@ -39,8 +39,7 @@ INCLUDEPATH += /usr/local/include/opencv2/ml
 INCLUDEPATH += /usr/local/include/opencv2/contrib
 INCLUDEPATH += /usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/include
 LIBS += `pkg-config opencv --cflags --libs`
-LIBS += `/usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/depends/libMVSD.so`
-
+LIBS += `/usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/depends/libMVSD.so -lMVSDK`
 
 #LIBS += -lgxiapi \
 #-ldximageproc
