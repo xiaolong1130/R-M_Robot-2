@@ -37,9 +37,23 @@ INCLUDEPATH += /usr/local/include/opencv2/objdetect
 INCLUDEPATH += /usr/local/include/opencv2/calib3d
 INCLUDEPATH += /usr/local/include/opencv2/ml
 INCLUDEPATH += /usr/local/include/opencv2/contrib
-INCLUDEPATH += /usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/include
+#INCLUDEPATH += /usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/include
+INCLUDEPATH += /opt/DahuaTech/MVviewer/include
+
+QMAKE_LIBS_OPENGL =
+DEFINES += QT_NO_DEBUG_OUTPUT LINUX64 QT_NO_OPENGL
+QMAKE_CXXFLAGS_RELEASE += -mssse3
+LIBS += -L./depends/	-lMVSDK
+LIBS += -L/opt/DahuaTech/MVviewer/lib	-lMVSDK
+#	LIBS += -L../../lib/	-llog4cpp
+LIBS += -L./depends/	-lImageConvert
+LIBS += -L./depends/	-lVideoRender
+LIBS += -L/opt/DahuaTech/MVviewer/lib/GenICam/bin/Linux64_x64 -lGCBase_gcc421_v3_0 -lGenApi_gcc421_v3_0 -lLog_gcc421_v3_0 -llog4cpp_gcc421_v3_0 -lNodeMapData_gcc421_v3_0 -lXmlParser_gcc421_v3_0 -lMathParser_gcc421_v3_0 -lrt -lpthread
+
+
 LIBS += `pkg-config opencv --cflags --libs`
-LIBS += `/usr/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/depends/libMVSD.so -lMVSDK`
+
+#LIBS += -L /opt/DahuaTech/MVviewer/lib/Qt -IMVSDK
 
 #LIBS += -lgxiapi \
 #-ldximageproc
@@ -56,6 +70,111 @@ HEADERS += \
     common/serial/serial_port.h \
     common/solve_angle/solve_angle.h \
     common/thread_control.h \
+#    include/GenICam/AcquisitionControl.h \
+#    include/GenICam/AnalogControl.h \
+#    include/GenICam/CAPI/IntTypes.h \
+#    include/GenICam/CAPI/SDK.h \
+#    include/GenICam/Camera.h \
+#    include/GenICam/CameraLink/CLCamera.h \
+#    include/GenICam/CameraLink/CLInterface.h \
+#    include/GenICam/Defs.h \
+#    include/GenICam/DeviceControl.h \
+#    include/GenICam/DigitalIOControl.h \
+#    include/GenICam/ErrorCode.h \
+#    include/GenICam/EventSubscribe.h \
+#    include/GenICam/Frame.h \
+#    include/GenICam/GigE/GigECamera.h \
+#    include/GenICam/GigE/GigEInterface.h \
+#    include/GenICam/ISPControl.h \
+#    include/GenICam/ImageFormatControl.h \
+#    include/GenICam/ParameterNode.h \
+#    include/GenICam/PixelType.h \
+#    include/GenICam/StreamSource.h \
+#    include/GenICam/System.h \
+#    include/GenICam/TransportLayerControl.h \
+#    include/GenICam/Usb/UsbCamera.h \
+#    include/GenICam/Usb/UsbInterface.h \
+#    include/GenICam/UserSetControl.h \
+#    include/Infra/Allocator.h \
+#    include/Infra/Assert.h \
+#    include/Infra/AtomicCount.h \
+#    include/Infra/CString.h \
+#    include/Infra/Defs.h \
+#    include/Infra/Detail/allocatorstringstorage.h \
+#    include/Infra/Detail/atomic_count.hpp \
+#    include/Infra/Detail/atomic_count_gcc.hpp \
+#    include/Infra/Detail/atomic_count_gcc_x86.hpp \
+#    include/Infra/Detail/atomic_count_pthreads.hpp \
+#    include/Infra/Detail/atomic_count_solaris.hpp \
+#    include/Infra/Detail/atomic_count_sync.hpp \
+#    include/Infra/Detail/atomic_count_win32.hpp \
+#    include/Infra/Detail/atomic_count_win64.hpp \
+#    include/Infra/Detail/construct.h \
+#    include/Infra/Detail/cowstringopt.h \
+#    include/Infra/Detail/flex_string.h \
+#    include/Infra/Detail/flex_string_details.h \
+#    include/Infra/Detail/flex_string_shell.h \
+#    include/Infra/Detail/ministringstorage.h \
+#    include/Infra/Detail/pp.hpp \
+#    include/Infra/Detail/pp_gcc.hpp \
+#    include/Infra/Detail/pp_msvc.hpp \
+#    include/Infra/Detail/simplestringstorage.h \
+#    include/Infra/Detail/smallstringopt.h \
+#    include/Infra/Detail/vectorstringstorage.h \
+#    include/Infra/Error.h \
+#    include/Infra/File.h \
+#    include/Infra/Function.h \
+#    include/Infra/FunctionTemplate.h \
+#    include/Infra/Guard.h \
+#    include/Infra/IntTypes.h \
+#    include/Infra/Mutex.h \
+#    include/Infra/PreProcessor.h \
+#    include/Infra/PrintLog.h \
+#    include/Infra/ReadWriteMutex.h \
+#    include/Infra/RecursiveMutex.h \
+#    include/Infra/Semaphore.h \
+#    include/Infra/Signal.h \
+#    include/Infra/SignalTemplate.h \
+#    include/Infra/StaticAssert.h \
+#    include/Infra/String.h \
+#    include/Infra/System.h \
+#    include/Infra/Thread.h \
+#    include/Infra/ThreadSpecific.h \
+#    include/Infra/Time.h \
+#    include/Infra/Timer.h \
+#    include/Infra/Types.h \
+#    include/Infra/Types/IntTypes.h \
+#    include/Infra/Types/Types.h \
+#    include/Infra/Vector.h \
+#    include/Infra/Version.h \
+#    include/Media/ImageConvert.h \
+#    include/Media/RecordVideo.h \
+#    include/Media/VideoRender.h \
+#    include/Memory/Block.h \
+#    include/Memory/Buffer.h \
+#    include/Memory/Defs.h \
+#    include/Memory/Detail/MemPool.h \
+#    include/Memory/Detail/checked_delete.hpp \
+#    include/Memory/Detail/shared_count.h \
+#    include/Memory/Detail/singleton.h \
+#    include/Memory/Detail/singleton_pool.h \
+#    include/Memory/Detail/smartptr_detail.h \
+#    include/Memory/Detail/sp_counted_base.hpp \
+#    include/Memory/Detail/sp_counted_base/sp_counted_base.h \
+#    include/Memory/Detail/sp_counted_base/sp_counted_base_gcc_ia64.hpp \
+#    include/Memory/Detail/sp_counted_base/sp_counted_base_gcc_x86.hpp \
+#    include/Memory/Detail/sp_counted_base/sp_counted_base_impl.hpp \
+#    include/Memory/Detail/sp_counted_base/sp_counted_base_w32.hpp \
+#    include/Memory/Detail/sp_counted_impl.hpp \
+#    include/Memory/EnableSharedFromThis.h \
+#    include/Memory/Packet.h \
+#    include/Memory/PoolAllocator.h \
+#    include/Memory/RefCount.h \
+#    include/Memory/ScopedPtr.h \
+#    include/Memory/SharePacketHelper.h \
+#    include/Memory/SharedPtr.h \
+#    include/Memory/SmartObjectPtr.h \
+#    include/Memory/WeakPtr.h \
     mainwindow.h \
     qcustomplot.h \
     base.h \

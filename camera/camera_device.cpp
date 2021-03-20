@@ -44,19 +44,21 @@ int CameraDevice::init()
     //getGrabMode(cameraSptr, bContious);
     setGrabMode(cameraSptr, bContious);
     //set Time
-    setExposureTime(cameraSptr,0.0001,0 );
+    setExposureTime(cameraSptr,6538.9,0 );
     CSystem &systemObj = CSystem::getInstance();
     modifyCamralExposureTime(systemObj, cameraSptr);
     //set gamma
     double dExposureTime=0;
     getGamma(cameraSptr, dExposureTime);
-    setGamma(cameraSptr, 0.01);
-
+    cout<<"gama :: read "<<dExposureTime<<endl;
+    setGamma(cameraSptr, 1.65);
+    getGamma(cameraSptr, dExposureTime);
+    cout<<"gama :: read "<<dExposureTime<<endl;
     //set rate
-    double dFrameRate = 0 ;
-    //  getAcquisitionFrameRate(cameraSptr, dFrameRate);
-     dFrameRate = 0 ;
-     setAcquisitionFrameRate(cameraSptr, dFrameRate);
+//    double dFrameRate = 0 ;
+//    //  getAcquisitionFrameRate(cameraSptr, dFrameRate);
+//     dFrameRate = 0 ;
+//     setAcquisitionFrameRate(cameraSptr, dFrameRate);
     cout<<"##### paramater seted!!!  #####"<<endl;
     //put some params here (baoguangzhi )
      // 创建流对象
@@ -71,40 +73,47 @@ int CameraDevice::init()
 
 void CameraDevice :: getImage(Mat &img)
 {
-    cout<<"#############Get image start #############"<<endl;
+//    cout<<"#############Get image start #############"<<endl;
     // 主动采图
     // 超时时间 100ms。即调用该接口 100ms 仍未采集到图像，返回失败
     CFrame frame;
-    streamPtr->getFrame(frame, 100);
-    const void* pImage = frame.getImage();
-    // 假设获取图像帧 CFrame 对象为 frame
-    // 分配转换所需 buffer。注意，目标格式为 RGB、BGR 时，需要乘以 3
-    int nBGRBufferSize = frame.getImageWidth() * frame.getImageHeight() * 3;
-    uint8_t *pBGRbuffer = new uint8_t[nBGRBufferSize];
-    // 设置转换配置参数
-    IMGCNV_SOpenParam openParam;
-    openParam.width = frame.getImageWidth();
-    openParam.height = frame.getImageHeight();
-    openParam.paddingX = frame.getImagePadddingX();
-    openParam.paddingY = frame.getImagePadddingY();
-    openParam.dataSize = frame.getImageSize();
-    openParam.pixelForamt = frame.getImagePixelFormat();
-    // 转换为 RGB24。 转换为其他格式时，调用相应的接口
-    IMGCNV_EErr status = IMGCNV_ConvertToRGB24((unsigned char *)pImage,
-    &openParam,
-    pBGRbuffer,
-    &nBGRBufferSize);
-    if (IMGCNV_SUCCESS != status)
-    {
-        cout<<"#####  Convert failed!!!    ###"<<endl;
-        delete[] pBGRbuffer; // 转码失败时，释放内存
+//    streamPtr->getFrame(frame, 100);
+    if(streamPtr->getFrame(frame, 100)){
+//           std::cout<<"yuhrtfyguifasytdfuyitasdtyfastydftyasfdtyfasdtfatsuy"<<std::endl;
+           const void* pImage = frame.getImage();
+           // 假设获取图像帧 CFrame 对象为 frame
+           // 分配转换所需 buffer。注意，目标格式为 RGB、BGR 时，需要乘以 3
+           int nBGRBufferSize = frame.getImageWidth() * frame.getImageHeight() * 3;
+           uint8_t *pBGRbuffer = new uint8_t[nBGRBufferSize];
+           // 设置转换配置参数
+           IMGCNV_SOpenParam openParam;
+           openParam.width = frame.getImageWidth();
+           openParam.height = frame.getImageHeight();
+           openParam.paddingX = frame.getImagePadddingX();
+           openParam.paddingY = frame.getImagePadddingY();
+           openParam.dataSize = frame.getImageSize();
+           openParam.pixelForamt = frame.getImagePixelFormat();
+           // 转换为 RGB24。 转换为其他格式时，调用相应的接口
+           IMGCNV_EErr status = IMGCNV_ConvertToBGR24((unsigned char *)pImage,
+           &openParam,
+           pBGRbuffer,
+           &nBGRBufferSize);
+           if (IMGCNV_SUCCESS != status)
+           {/*
+               cout<<"#####  Convert failed!!!    ###"<<endl;*/
+               delete[] pBGRbuffer; // 转码失败时，释放内存
+           }
+
+           img = cv::Mat(frame.getImageHeight(),
+           frame.getImageWidth(),
+           CV_8UC3,
+           (uint8_t*)pBGRbuffer);
+//           cout<<"This is where we translate image in camera into CV::Mat"<<endl;
+           nFrameNum++;
     }
-    img = cv::Mat(frame.getImageHeight(),
-    frame.getImageWidth(),
-    CV_8UC3,
-    (uint8_t*)pBGRbuffer);
-    cout<<"This is where we translate image in camera into CV::Mat"<<endl;
-    nFrameNum++;
+
+//    free(pBGRbuffer);
+//    delete[] pBGRbuffer;
 }
 // void onStreamEvent(const SStreamArg& arg, void* pUser)
 // {

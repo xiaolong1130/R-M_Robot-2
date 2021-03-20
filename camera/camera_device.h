@@ -6,8 +6,8 @@
 #include "StreamRetrieve.h"
 #include "Memory/SharedPtr.h"
 #include "Media/RecordVideo.h"
-#include "Frame.h"
-#include "ImageConvert.h"
+#include "GenICam/Frame.h"
+#include "Media/ImageConvert.h"
 using namespace cv;
 using namespace std;
 using namespace Dahua::Infra;
