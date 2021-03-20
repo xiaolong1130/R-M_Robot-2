@@ -1,105 +1,369 @@
-/****************************************************************************
- *  Copyright (C) 2019 cz.
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
- ***************************************************************************/
-#pragma once
-
 #include <opencv2/opencv.hpp>
-#include "base.h"
-
+#include "GenICam/System.h"     //Find DH
+#include "GenICam/Camera.h"
+#include "GenICam/StreamSource.h"
+#include "Infra/PrintLog.h"
+#include "StreamRetrieve.h"
+#include "Memory/SharedPtr.h"
+#include "Media/RecordVideo.h"
+#include "Frame.h"
+#include "ImageConvert.h"
 using namespace cv;
 using namespace std;
-
-#ifndef CANCLE_GALAXY
-#include "GxIAPI.h"
-#include "DxImageProc.h"
-
-// ---------------------------- galaxy ----------------------------
+using namespace Dahua::Infra;
+// ------------------------------dh-----------------------------//
 class CameraDevice
 {
+private:
+    bool status;    //Judge the status
+    CSystem &systemObj = CSystem::getInstance();
+    
+    ICameraPtr cameraSptr;
+    uint32_t nDeviceNum;
+    bool bContious;
+    bool isDiscoverySuccess;
+    Mat src;
+    IStreamSourcePtr streamPtr;
+    uint64_t nFrameNum;
 public:
     CameraDevice();
     ~CameraDevice();
     int init();
     void getImage(Mat &img);
-    uint64_t getFrameNumber();
-private:
-    GX_STATUS status;
-    GX_DEV_HANDLE hDevice;
-    GX_OPEN_PARAM stOpenParam;
-    uint32_t nDeviceNum;
-    GX_FRAME_DATA stFrameData;
-    Mat src;
-    uint64_t nFrameNum;
-};
-#endif
+    uint64_t getFrameNumber();  //1 setBufferCount(uint32_t nSize) = 0;
 
-
-//----------------------------- v4l2 ------------------------------
-class CaptureVideo
-{
-public:
-    CaptureVideo(const char* device, unsigned int in_size_buffer = 1);
-    ~CaptureVideo();
-    bool startStream();
-    bool closeStream();
-    char* video_name(char* format =".avi");
-
-    // setting
-
-    bool setExposureTime(bool in_exp, int in_t);
-    bool setVideoFormat(int in_width, int in_height, bool in_mjpg = 1);
-    bool setVideoFPS(int in_fps);
-    bool setBufferSize(int in_buffer_size);
-
-    // restarting
-    bool changeVideoFormat(int in_width, int in_height, bool in_mjpg = 1);
-    void restartCapture();
-
-    // getting
-    void imread(Mat &image);
-    bool getVideoSize(int &width, int &height);
-    int getFrameCount(){
-        return current_frame;
-    }
-    int getFD(){
-        return fd;
-    }
-    void info();
-
-    CaptureVideo& operator >> (Mat & image);
-
-private:
-    void cvtRaw2Mat(const void * data, Mat &image);
-    bool refreshVideoFormat();
-    bool initMMap();
-    int xioctl(int in_fd,int in_request, void *arg);
-
-    struct MapBuffer
+    void onGetFrame(const CFrame &pFrame)
     {
-        void * ptr;
-        unsigned int size;
-    };
-    unsigned int capture_width;
-    unsigned int capture_height;
-    unsigned int format;
-    int fd;
-    unsigned int buffer_size;
-    unsigned int buffer_index;
-    unsigned int current_frame;
-    MapBuffer * mb;
-    const char * video_path;
+        uint64_t blockld = pFrame.getBlockId();
+    }
+
 
 };
+
+
+
+    // canshu
+static int32_t getGrabMode(ICameraPtr& cameraSptr, bool &bContious)
+{
+    int32_t bRet;
+    IAcquisitionControlPtr sptrAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptrAcquisitionControl)
+    {
+        return -1;
+    }
+
+    CEnumNode enumNode = sptrAcquisitionControl->triggerSelector();
+    bRet = enumNode.setValueBySymbol("FrameStart");
+    if (false == bRet)
+    {
+        printf("set TriggerSelector fail.\n");
+        return -1;
+    }
+
+    CString strValue;
+    enumNode = sptrAcquisitionControl->triggerMode();
+    bRet = enumNode.getValueSymbol(strValue);
+    if (false == bRet)
+    {
+        printf("get triggerMode fail.\n");
+        return -1;
+    }
+
+    if (strValue == "Off")
+    {
+        bContious = true;
+    }
+    else if (strValue == "On")
+    {
+        bContious = false;
+    }
+    else
+    {
+        printf("get triggerMode fail.\n");
+        return -1;
+    }
+    return 0;
+}
+// 设置相机采图模式（连续采图、触发采图）
+// Set camera acquisition mode (continuous acquisition, triggered acquisition) 
+static int32_t setGrabMode(ICameraPtr& cameraSptr, bool bContious)
+{
+    int32_t bRet;
+    IAcquisitionControlPtr sptrAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptrAcquisitionControl)
+    {
+        return -1;
+    }
+
+    CEnumNode enumNode = sptrAcquisitionControl->triggerSelector();
+    bRet = enumNode.setValueBySymbol("FrameStart");
+    if (false == bRet)
+    {
+        printf("set TriggerSelector fail.\n");
+        return -1;
+    }
+
+    if (true == bContious)
+    {
+        enumNode = sptrAcquisitionControl->triggerMode();
+        bRet = enumNode.setValueBySymbol("Off");
+        if (false == bRet)
+        {
+            printf("set triggerMode fail.\n");
+            return -1;
+        }
+    }
+    else
+    {
+        enumNode = sptrAcquisitionControl->triggerMode();
+        bRet = enumNode.setValueBySymbol("On");
+        if (false == bRet)
+        {
+            printf("set triggerMode fail.\n");
+            return -1;
+        }
+
+        // 设置触发源为软触发（硬触发为Line1）
+		// Set trigger source as soft trigger (hard trigger as Line1)
+        enumNode = sptrAcquisitionControl->triggerSource();
+        bRet = enumNode.setValueBySymbol("Software");
+        if (false == bRet)
+        {
+            printf("set triggerSource fail.\n");
+            return -1;
+        }
+    }
+    return 0;
+}
+
+// 设置曝光值(曝光、自动曝光/手动曝光)
+// Set exposure value (exposure, auto exposure / manual exposure)
+static int32_t setExposureTime(ICameraPtr& cameraSptr, double dExposureTime, bool bAutoExposure = false)
+{
+    bool bRet;
+    IAcquisitionControlPtr sptrAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptrAcquisitionControl)
+    {
+        return -1;
+    }
+
+    if (bAutoExposure)
+    {
+        CEnumNode enumNode = sptrAcquisitionControl->exposureAuto();
+        bRet = enumNode.setValueBySymbol("Continuous");
+        if (false == bRet)
+        {
+            printf("set exposureAuto fail.\n");
+            return -1;
+        }
+    }
+    else
+    {
+        CEnumNode enumNode = sptrAcquisitionControl->exposureAuto();
+        bRet = enumNode.setValueBySymbol("Off");
+        if (false == bRet)
+        {
+            printf("set exposureAuto fail.\n");
+            return -1;
+        }
+
+        CDoubleNode doubleNode = sptrAcquisitionControl->exposureTime();
+        bRet = doubleNode.setValue(dExposureTime);
+        if (false == bRet)
+        {
+            printf("set exposureTime fail.\n");
+            return -1;
+        }
+    }
+    return 0;
+}
+
+// 获取曝光时间 
+// get exposureTime
+static int32_t getExposureTime(ICameraPtr& cameraSptr, double &dExposureTime)
+{
+    bool bRet;
+    IAcquisitionControlPtr sptrAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptrAcquisitionControl)
+    {
+        return -1;
+    }
+
+    CDoubleNode doubleNode = sptrAcquisitionControl->exposureTime();
+    bRet = doubleNode.getValue(dExposureTime);
+    if (false == bRet)
+    {
+        printf("get exposureTime fail.\n");
+        return -1;
+    }
+    return 0;
+}
+
+// 修改曝光时间 （与相机连接之后调用）
+// Modify exposure time (after calling connect camera)
+static void modifyCamralExposureTime(CSystem &systemObj, ICameraPtr& cameraSptr)
+{
+    IAcquisitionControlPtr sptrAcquisitionControl = systemObj.createAcquisitionControl(cameraSptr);
+    if (NULL == sptrAcquisitionControl)
+    {
+        return;
+    }
+
+    double exposureTimeValue = 0.5;
+    CDoubleNode exposureTime = sptrAcquisitionControl->exposureTime();
+
+    exposureTime.getValue(exposureTimeValue);
+    printf("before change ,exposureTime is %f. thread ID :%d\n", exposureTimeValue, CThread::getCurrentThreadID());
+
+    exposureTime.setValue(exposureTimeValue + 2);
+    exposureTime.getValue(exposureTimeValue);
+    printf("after change ,exposureTime is %f. thread ID :%d\n", exposureTimeValue, CThread::getCurrentThreadID());
+}
+
+// 设置采图速度（秒帧数）
+// Set the acquisition speed (seconds\frames)
+static int32_t setAcquisitionFrameRate(ICameraPtr& cameraSptr, double dFrameRate)
+{
+    bool bRet;
+    IAcquisitionControlPtr sptAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptAcquisitionControl)
+    {
+        return -1;
+    }
+
+    CBoolNode booleanNode = sptAcquisitionControl->acquisitionFrameRateEnable();
+    bRet = booleanNode.setValue(true);
+    if (false == bRet)
+    {
+        printf("set acquisitionFrameRateEnable fail.\n");
+        return -1;
+    }
+
+    CDoubleNode doubleNode = sptAcquisitionControl->acquisitionFrameRate();
+    bRet = doubleNode.setValue(dFrameRate);
+    if (false == bRet)
+    {
+        printf("set acquisitionFrameRate fail.\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+// 获取采图速度（秒帧数）
+// Get the acquisition speed (seconds and frames)
+static int32_t getAcquisitionFrameRate(ICameraPtr& cameraSptr, double &dFrameRate)
+{
+    bool bRet;
+    IAcquisitionControlPtr sptAcquisitionControl = CSystem::getInstance().createAcquisitionControl(cameraSptr);
+    if (NULL == sptAcquisitionControl)
+    {
+        return -1;
+    }
+
+    CDoubleNode doubleNode = sptAcquisitionControl->acquisitionFrameRate();
+    bRet = doubleNode.getValue(dFrameRate);
+    if (false == bRet)
+    {
+        printf("get acquisitionFrameRate fail.\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+// 获取伽马值 
+// Get gamma 
+static int32_t getGamma(ICameraPtr& cameraSptr, double &dGamma)
+{
+    bool bRet;
+    IAnalogControlPtr sptrAnalogControl = CSystem::getInstance().createAnalogControl(cameraSptr);
+    if (NULL == sptrAnalogControl)
+    {
+        return -1;
+    }
+
+    CDoubleNode doubleNode = sptrAnalogControl->gamma();
+    bRet = doubleNode.getValue(dGamma);
+    if (false == bRet)
+    {
+        printf("get gamma fail.\n");
+        return -1;
+    }
+    return 0;
+}
+
+// 设置伽马值 
+// Set gamma
+static int32_t setGamma(ICameraPtr& cameraSptr, double dGamma)
+{
+    bool bRet;
+    IAnalogControlPtr sptrAnalogControl = CSystem::getInstance().createAnalogControl(cameraSptr);
+    if (NULL == sptrAnalogControl)
+    {
+        return -1;
+    }
+
+    CDoubleNode doubleNode = sptrAnalogControl->gamma();
+    bRet = doubleNode.setValue(dGamma);
+    if (false == bRet)
+    {
+        printf("set gamma fail.\n");
+        return -1;
+    }
+    return 0;
+}
+
+
+
+
+// 获取采图图像宽度 
+// Get the width of the image
+static int32_t getWidth(ICameraPtr& cameraSptr, int64_t &nWidth)
+{
+    bool bRet;
+    IImageFormatControlPtr sptrImageFormatControl = CSystem::getInstance().createImageFormatControl(cameraSptr);
+    if (NULL == sptrImageFormatControl)
+    {
+        return -1;
+    }
+
+    CIntNode intNode = sptrImageFormatControl->width();
+    bRet = intNode.getValue(nWidth);
+    if (!bRet)
+    {
+        printf("get width fail.\n");
+    }
+    return 0;
+}
+
+// 获取采图图像高度 
+// Get the height of the image
+static int32_t getHeight(ICameraPtr& cameraSptr, int64_t &nHeight)
+{
+    bool bRet;
+    IImageFormatControlPtr sptrImageFormatControl = CSystem::getInstance().createImageFormatControl(cameraSptr);
+    if (NULL == sptrImageFormatControl)
+    {
+        return -1;
+    }
+
+    CIntNode intNode = sptrImageFormatControl->height();
+    bRet = intNode.getValue(nHeight);
+    if (!bRet)
+    {
+        printf("get height fail.\n");
+        return -1;
+    }
+    return 0;
+}
+
+
+// CameraDevice::CameraDevice(/* args */)
+// {
+
+// }
+
+// CameraDevice::~CameraDevice()
+// {
+// }

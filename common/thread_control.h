@@ -35,7 +35,7 @@ using namespace cv;
 using namespace std;
 
 /**
- * @brief 图像信息，用于线程之间的图像传输
+ * @a 图像信息，用于线程之间的图像传输
  */
 
 
