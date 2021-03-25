@@ -17,14 +17,14 @@ CameraDevice :: CameraDevice()
     status = cameraSptr->connect();
     cout<<"##### Device connected "<<status<<"  ###  "<<endl;
     //pic
-    src.create(320, 220, CV_8UC3);
+    src.create(640, 420, CV_8UC3);
     bContious = 1;
     nFrameNum = 0 ;
 }
 
 CameraDevice:: ~CameraDevice()
 {
-    std::cout<<"Del!!"<<std::endl;
+     std::cout<<"Del!!"<<std::endl;
     // Stop采集图像。假设创建的流对象为 streamPtr
     streamPtr->stopGrabbing();
     TVector<ICameraPtr>vCameraPtrList;
@@ -51,7 +51,7 @@ int CameraDevice::init()
     double dExposureTime=0;
     getGamma(cameraSptr, dExposureTime);
     cout<<"gama :: read "<<dExposureTime<<endl;
-    setGamma(cameraSptr, 2.6 );
+    setGamma(cameraSptr, 1.5);
     getGamma(cameraSptr, dExposureTime);
     cout<<"gama :: read "<<dExposureTime<<endl;
 //    setGainRaw(cameraSptr, 64);
@@ -61,26 +61,70 @@ int CameraDevice::init()
 //     dFrameRate = 0 ;
 //     setAcquisitionFrameRate(cameraSptr, dFrameRate);
     cout<<"##### paramater seted!!!  #####"<<endl;
-    //put some params here (baoguangzhi )
-     // 创建流对象
-    streamPtr = systemObj.createStreamSource(cameraSptr);   //camera objector = cameraSptr
-//    streamPtr->attachGrabbing(IStreamSource::Proc(&CameraDevice::onGetFrame, this));
-    // // 设置缓存个数为 1。假设创建的流对象为 streamPtr
-    streamPtr->setBufferCount(8);
-    // // 开始采集图像。假设创建的流对象为 streamPtr
-//    streamPtr->attachGrabbing(IStreamSource::Proc(&CameraDevice::onGetFrame, this));
 
-    streamPtr->startGrabbing();
-    cout<<"### Grab started!! ###"<<endl;
 }
+//回调函数
+void CameraDevice::DahuaCallback(const CFrame& frame)
+{
+	CFrameInfo frameInfo;
+	frameInfo.m_nWidth = frame.getImageWidth();
+	frameInfo.m_nHeight = frame.getImageHeight();
+	frameInfo.m_nBufferSize = frame.getImageSize();
+	frameInfo.m_nPaddingX = frame.getImagePadddingX();
+	frameInfo.m_nPaddingY = frame.getImagePadddingY();
+	frameInfo.m_PixelType = frame.getImagePixelFormat();
+	frameInfo.m_pImageBuf = (BYTE *)malloc(sizeof(BYTE)* frameInfo.m_nBufferSize);
 
+	/* 内存申请失败，直接返回 */
+	if (frameInfo.m_pImageBuf != NULL)
+	{
+		memcpy(frameInfo.m_pImageBuf, frame.getImage(), frame.getImageSize());
+
+		if (_displayFrameQueue.size() > 16)
+		{
+			CFrameInfo frameOld;
+			_displayFrameQueue.get(frameOld);
+			free(frameOld.m_pImageBuf);
+		}
+
+		_displayFrameQueue.push_back(frameInfo);
+	}
+}
 void CameraDevice :: getImage(Mat &img)
 {
-    //cout<<"#############Get image start #############"<<endl;
-    // 主动采图
-    // 超时时间 100ms。即调用该接口 100ms 仍未采集到图像，返回失败
-    CFrame frame;
-    if(streamPtr->getFrame(frame, 500)){
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    streamPtr = CSystem::getInstance().createStreamSource(cameraSptr);
+    streamPtr->setBufferCount(2);
+    bool isSuccess = streamPtr->attachGrabbing(onGetFrame);
+	if (!isSuccess)
+	{
+		std::cout<<"error11111111111"<<std::endl;
+	}
+ 
+    if(streamPtr->startGrabbing()){
 //           std::cout<<"yuhrtfyguifasytdfuyitasdtyfastydftyasfdtyfasdtfatsuy"<<std::endl;
            const void* pImage = frame.getImage();
            // 假设获取图像帧 CFrame 对象为 frame
@@ -88,7 +132,7 @@ void CameraDevice :: getImage(Mat &img)
            int nBGRBufferSize = frame.getImageWidth() * frame.getImageHeight() * 3;
            uint8_t *pBGRbuffer = new uint8_t[nBGRBufferSize];
            // 设置转换配置参数
-           IMGCNV_SOpenParam openParam;
+        //    IMGCNV_SOpenParam openParam;
            openParam.width = frame.getImageWidth();
            openParam.height = frame.getImageHeight();
            openParam.paddingX = frame.getImagePadddingX();
@@ -105,14 +149,13 @@ void CameraDevice :: getImage(Mat &img)
                cout<<"#####  Convert failed!!!    ###"<<endl;
                delete[] pBGRbuffer; // 转码失败时，释放内存
            }
-           //delete[] pBGRbuffer
+        
            img = cv::Mat(frame.getImageHeight(),
            frame.getImageWidth(),
            CV_8UC3,
            (uint8_t*)pBGRbuffer);
            cout<<"This is where we translate image in camera into CV::Mat"<<endl;
            nFrameNum++;
-//           delete[] pBGRbuffer;
            //free(pBGRbuffer);
     }
 

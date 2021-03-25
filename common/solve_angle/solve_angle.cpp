@@ -41,6 +41,7 @@ SolveAngle::SolveAngle(const char* file_path, float c_x, float c_y, float c_z, f
 void SolveAngle::getAngle(vector<Point2f> &image_point, float ballet_speed, float& angle_x, float& angle_y, float &dist)
 {
     // 姿态结算
+
     solvePnP(objectPoints, image_point, cameraMatrix, distCoeffs, rvec, tvec);
     float dh = ((image_point.at(3).y - image_point.at(0).y) + (image_point.at(2).y - image_point.at(1).y))/2;
     float state_dist = height_world * f_ / dh; // Z

@@ -37,7 +37,7 @@ ThreadControl::ThreadControl()
 // 图像生成线程
 void ThreadControl::ImageProduce()
 {
-    cout << " ------ SHORT CAMERA PRODUCE TASK ON !!! ------ " << endl;
+    cout << " ------ LONG CAMERA PRODUCE TASK ON !!! ------ " << endl;
 
 
 #if(SHORT_CAMERA_ENABLE)

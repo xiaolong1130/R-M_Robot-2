@@ -53,7 +53,7 @@ galaxy_0.xml"
 //****** 摄像头信息 *****
 #define VIDEO_WIDTH 1300
 #define VIDEO_HEIGHT 800
-#define BUFFER_SIZE 5
+#define BUFFER_SIZE 4
 
 //****** 外部驱动配置 *****
 #define SERIAL_PATH "/dev/stm32"
@@ -62,7 +62,7 @@ galaxy_0.xml"
 #define GIMBAL_BAUD B921600
 #define CAMERA0_PATH "/dev/video1"
 #define CAMERA1_PATH "/dev/video1"
-#define CAMERA0_FILEPATH "../rm-vision/camera/camera_param_niu/camera4mm_5.xml"
+#define CAMERA0_FILEPATH "../rm-vision/camera/camera_param/camera4mm_5.xml"
 
 
 //****** 角度解算配置 *****
@@ -80,8 +80,8 @@ galaxy_0.xml"
 //****** 笔记本调试相关参数 *****
 //#define DEBUG_VIDEO 1
 //#define FORCE_CHANGE_CAMERA
-#define ARMOR_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
-#define BUFF_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
+//#define ARMOR_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
+//#define BUFF_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
 struct OtherParam
 {
     int color = 0;       // 我方车辆颜色，0是蓝色，1是红色。用于图像预处理

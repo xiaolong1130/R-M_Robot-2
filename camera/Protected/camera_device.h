@@ -12,6 +12,35 @@ using namespace cv;
 using namespace std;
 using namespace Dahua::Infra;
 // ------------------------------dh-----------------------------//
+class CFrameInfo : public Dahua::Memory::CBlock
+{
+public:
+	CFrameInfo()
+	{
+		m_pImageBuf = NULL;
+		m_nBufferSize = 0;
+		m_nWidth = 0;
+		m_nHeight = 0;
+		m_PixelType = Dahua::GenICam::gvspPixelMono8;
+		m_nPaddingX = 0;
+		m_nPaddingY = 0;
+		m_nTimeStamp = 0;
+	}
+
+	~CFrameInfo()
+	{
+	}
+
+public:
+	BYTE		*m_pImageBuf;
+	int			m_nBufferSize;
+	int			m_nWidth;
+	int			m_nHeight;
+	Dahua::GenICam::EPixelType	m_PixelType;
+	int			m_nPaddingX;
+	int			m_nPaddingY;
+	uint64_t	m_nTimeStamp;
+};
 
 class CameraDevice
 {

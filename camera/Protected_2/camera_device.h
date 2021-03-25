@@ -32,13 +32,11 @@ public:
     int init();
     void getImage(Mat &img);
     uint64_t getFrameNumber();  //1 setBufferCount(uint32_t nSize) = 0;
-    void DahuaCallback(const CFrame& frame);
+    void onGetFrame(const CFrame& frame);
+    
+
 };
 
-// static void onGetFrame(const CFrame &pFrame)
-//     {
-//         uint64_t blockld = pFrame.getBlockId();
-//     }
     // canshu
 static int32_t getGrabMode(ICameraPtr& cameraSptr, bool &bContious)
 {

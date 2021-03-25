@@ -8,6 +8,7 @@
 #include "Media/RecordVideo.h"
 #include "GenICam/Frame.h"
 #include "Media/ImageConvert.h"
+#include "RGBConvert.h"
 using namespace cv;
 using namespace std;
 using namespace Dahua::Infra;
@@ -32,13 +33,13 @@ public:
     int init();
     void getImage(Mat &img);
     uint64_t getFrameNumber();  //1 setBufferCount(uint32_t nSize) = 0;
-    void DahuaCallback(const CFrame& frame);
-};
+    void onGetFrame(const CFrame& frame);
+    FrameBufferSPtr getConvertedImage();
+	void addConvertedImage(const FrameBufferSPtr& sptrConvertedImage);
 
-// static void onGetFrame(const CFrame &pFrame)
-//     {
-//         uint64_t blockld = pFrame.getBlockId();
-//     }
+};
+typedef Dahua::Memory::TSharedPtr<FrameBuffer> FrameBufferSPtr;
+extern bool ConvertToBGR24(const Dahua::GenICam::CFrame& input, FrameBufferSPtr& output);
     // canshu
 static int32_t getGrabMode(ICameraPtr& cameraSptr, bool &bContious)
 {
