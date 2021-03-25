@@ -106,13 +106,14 @@ void CameraDevice :: getImage(Mat &img)
                delete[] pBGRbuffer; // 转码失败时，释放内存
            }
            //delete[] pBGRbuffer
-           img = cv::Mat(frame.getImageHeight(),
+           cv::Mat img2 = cv::Mat(frame.getImageHeight(),
            frame.getImageWidth(),
            CV_8UC3,
            (uint8_t*)pBGRbuffer);
+           img2.copyTo(img);
            cout<<"This is where we translate image in camera into CV::Mat"<<endl;
            nFrameNum++;
-//           delete[] pBGRbuffer;
+           delete[] pBGRbuffer;
            //free(pBGRbuffer);
     }
 
