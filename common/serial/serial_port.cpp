@@ -85,6 +85,14 @@ void SerialPort::send_data(const struct serial_transmit_data &data)
 {
     if(data.size != write(fd, data.raw_data, data.size))
     {
+        int itest =0;
+        for(itest=0;itest<=10;itest++)
+            {
+                cout<<"raw["<<itest<<"]::";
+                printf("%x",data.raw_data[itest]);
+                cout<<endl;
+            }
+
         cout << "!!! send data failure !!!" << fd << endl;
         restart_serial();
         cout << "restart fd" << fd << endl;

@@ -111,7 +111,7 @@ void CameraDevice :: getImage(Mat &img)
            CV_8UC3,
            (uint8_t*)pBGRbuffer);
            img2.copyTo(img);
-           cout<<"This is where we translate image in camera into CV::Mat"<<endl;
+//           cout<<"This is where we translate image in camera into CV::Mat"<<endl;
            nFrameNum++;
            delete[] pBGRbuffer;
            //free(pBGRbuffer);

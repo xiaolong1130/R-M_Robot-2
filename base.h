@@ -39,7 +39,7 @@ galaxy_0.xml"
 //****** 线程使能 *****
 #define SHORT_CAMERA_ENABLE 0
 #define LONG_CAMERA_ENABLE  1
-//#define GET_STM32_THREAD
+#define GET_STM32_THREAD
 //****** 装甲板识别配置 *****
 #define ARMOR_TRACK_BAR
 #define DEBUG_ARMOR_DETECT
@@ -66,8 +66,8 @@ galaxy_0.xml"
 
 
 //****** 角度解算配置 *****
-//#define SET_ZEROS_GRAVITY
-//#define SIMPLE_SOLVE_ANGLE_FOR_ARMOR_DETECT
+#define SET_ZEROS_GRAVITY
+#define SIMPLE_SOLVE_ANGLE_FOR_ARMOR_DETECT
 // 摄像头坐标系到云台坐标系
 #define SHOR_X 57.0f
 #define SHOR_Y 47.5f
@@ -78,7 +78,7 @@ galaxy_0.xml"
 #define PTZ_TO_BARREL 0.0f   // 补兵激光在２３ｍｍ下方
 
 //****** 笔记本调试相关参数 *****
-//#define DEBUG_VIDEO 1
+//#define DEBUG_VIDEO 0
 //#define FORCE_CHANGE_CAMERA
 //#define ARMOR_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
 //#define BUFF_VIDEO_PATH "/home/andy/YIHENG_ZHBIT_VISION-infantry/R-M_Robot/Videos/test.avi"
